@@ -20,18 +20,21 @@
 
 - name: "Combine args for each apps"
   set_fact: 
-    yunohost_nc_apps_settings: |-
+    yunohost_nc_apps_settings:
       "{{ 
         yunohost_nc_apps_settings | default([]) +
         [ {'name': item, 'args': yunohost_apps_nextcloud.config.apps[item].keys() | list} ] 
       }}"
   loop: "{{ yunohost_apps_nextcloud.config.apps.keys() }}"
 
+- debug:
+    msg: >- 
+          some_command {{ item.0.name }} 
+          --{{ item.1 }}={{ yunohost_nc_apps_settings[item.0.name][item.1] }}
+  loop: "{{ yunohost_nc_apps_settings | subelements('args') }}"
+
 - name: Set NextCloud modules apps config
   command: >- 
           php occ config:app:set "{{ item.0.name }}" "{{ item.1 }}"
           --value= "{{ yunohost_nc_apps_settings[item.0.name][item.1] }}"
-  args:
-     chdir: /var/www/nextcloud
   loop: "{{ yunohost_nc_apps_settings | subelements('args') }}"
-
