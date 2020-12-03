@@ -1,0 +1,31 @@
+---
+yunohost_apps_nextcloud:
+  config:
+    system:
+      installbybionatics: true
+    apps:
+      onlyoffice:
+        DocumentServerUrl: https://office.yolops.dev
+        StorageUrl: ""
+        DocumentServerInternalUrl: ""
+        settings_error: "Erreur lors du telechargement du document a convertir."
+      unkapp:
+        bli: "bla"
+        blo: "bloo"
+        blu: "blur"
+  apps:
+    - name: onlyoffice
+      enabled: True
+      install: True
+    - name: end_to_end_encryption
+      enabled: False
+      install: True
+    - name: groupfolders
+      enabled: True
+      install: True
+    - name: groupquota
+      enabled: True
+      install: True
+    - name: unkapp
+      enabled: False
+      install: False

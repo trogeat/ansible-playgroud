@@ -1,0 +1,6 @@
+---
+- name: Deploy NextCloud Apps
+  hosts: localhost
+  any_errors_fatal: true
+  roles:
+    - role: yunohost-apps-nc

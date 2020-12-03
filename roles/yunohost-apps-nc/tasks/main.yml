@@ -1,0 +1,37 @@
+---
+- debug:
+    var: yunohost_apps_nextcloud.config.apps.keys()
+  when: yunohost_apps_nextcloud.config.apps is defined
+  tags:
+    - debug
+
+- debug:
+    var: yunohost_apps_nextcloud.config.apps['onlyoffice'].keys()
+  when: yunohost_apps_nextcloud.config.apps is defined
+  tags:
+    - debug
+
+- debug:
+    var: yunohost_apps_nextcloud.config.apps['unkapp'].keys()
+  when: yunohost_apps_nextcloud.config.apps is defined
+  tags:
+    - debug
+
+
+- name: "Combine args for each apps"
+  set_fact: 
+    yunohost_nc_apps_settings: |-
+      "{{ 
+        yunohost_nc_apps_settings | default([]) +
+        [ {'name': item, 'args': yunohost_apps_nextcloud.config.apps[item].keys() | list} ] 
+      }}"
+  loop: "{{ yunohost_apps_nextcloud.config.apps.keys() }}"
+
+- name: Set NextCloud modules apps config
+  command: >- 
+          php occ config:app:set "{{ item.0.name }}" "{{ item.1 }}"
+          --value= "{{ yunohost_nc_apps_settings[item.0.name][item.1] }}"
+  args:
+     chdir: /var/www/nextcloud
+  loop: "{{ yunohost_nc_apps_settings | subelements('args') }}"
+
